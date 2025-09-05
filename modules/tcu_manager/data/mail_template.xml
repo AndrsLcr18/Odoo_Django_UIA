@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="mail_template_estado_solicitud" model="mail.template">
+            <field name="name">Notificación Estado Solicitud TCU</field>
+            <field name="model_id" ref="model_tcu_estudiante"/>
+            <field name="subject">Estado de su solicitud de TCU - ${object.name}</field>
+            <field name="email_to">${object.correo}</field>
+            <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px;">
+    <p>Estimado/a <strong>${object.name}</strong>,</p>
+    
+    <p>Le informamos sobre el estado actual de su solicitud de TCU:</p>
+    
+    <table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+        <tr>
+            <td style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;"><strong>Carnet:</strong></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${object.carnet}</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;"><strong>Período:</strong></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${object.periodo_id.name}</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;"><strong>Lugar de TCU:</strong></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${object.lugar_tcu or 'No especificado'}</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;"><strong>Estado:</strong></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">
+                <span style="color: ${'#28a745' if object.estado_solicitud == 'aprobado' else '#dc3545' if object.estado_solicitud == 'rechazado' else '#ffc107' if object.estado_solicitud == 'pendiente' else '#17a2b8'}; font-weight: bold;">
+                    ${dict(object._fields['estado_solicitud'].selection)[object.estado_solicitud]}
+                </span>
+            </td>
+        </tr>
+    </table>
+    
+    % if object.motivo_estado:
+    <p><strong>Motivo/Observación:</strong><br/>
+    ${object.motivo_estado}</p>
+    % endif
+    
+    % if object.observaciones:
+    <p><strong>Observaciones adicionales:</strong><br/>
+    ${object.observaciones}</p>
+    % endif
+    
+    <p>Si tiene alguna consulta, puede contactarnos respondiendo a este correo.</p>
+    
+    <p>Saludos cordiales,<br/>
+    <strong>Departamento de TCU</strong></p>
+</div>
+            ]]></field>
+        </record>
+    </data>
+</odoo> 

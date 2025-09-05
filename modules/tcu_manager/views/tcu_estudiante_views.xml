@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista de lista para estudiantes -->
+        <record id="view_tcu_estudiante_tree" model="ir.ui.view">
+            <field name="name">tcu.estudiante.tree</field>
+            <field name="model">tcu.estudiante</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="carnet"/>
+                    <field name="identificacion"/>
+                    <field name="periodo_id"/>
+                    <field name="fecha_solicitud"/>
+                    <field name="estado_solicitud"/>
+                    <field name="lugar_tcu"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista de formulario para estudiantes -->
+        <record id="view_tcu_estudiante_form" model="ir.ui.view">
+            <field name="name">tcu.estudiante.form</field>
+            <field name="model">tcu.estudiante</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <!-- Botones de estado con notificación -->
+                        <button name="action_enviar_notificacion_correo" 
+                                type="object" 
+                                string="📧 Enviar Notificación"
+                                class="btn-primary"
+                                modifiers="{'invisible': [('estado_solicitud', '=', False)]}"/>
+                        
+                        <!-- Botones para habilitar/deshabilitar edición -->
+                        <button name="action_habilitar_edicion" 
+                                type="object" 
+                                string="✏️ Habilitar Edición Manual"
+                                class="btn-secondary"
+                                modifiers="{'invisible': [('campos_readonly', '=', False)]}"/>
+                        
+                        <button name="action_deshabilitar_edicion" 
+                                type="object" 
+                                string="🔒 Deshabilitar Edición"
+                                class="btn-secondary"
+                                modifiers="{'invisible': [('campos_readonly', '=', True)]}"/>
+                        
+                        <field name="estado_solicitud" widget="statusbar" statusbar_visible="en_revision,pendiente,rechazado,aprobado" statusbar_clickable="True"/>
+                    </header>
+                    
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <field name="campos_readonly" modifiers="{'invisible': True}"/>
+                        </div>
+                        
+                        <group>
+                            <group string="Información del Estudiante">
+                                <field name="name" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                                <field name="identificacion" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                                <field name="carnet" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                                <field name="correo" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                                <field name="telefono" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                            </group>
+                            
+                            <group string="Control de Solicitud">
+                                <field name="periodo_id" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                                <field name="lugar_tcu" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                                <field name="encargado_estudiante" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                                <field name="fecha_solicitud" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                                <field name="estado_display" widget="html"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Observaciones y Motivos">
+                            <field name="observaciones" modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                            <field name="motivo_estado" 
+                                   modifiers="{'invisible': [('estado_solicitud', 'not in', ['pendiente','rechazado'])], 'readonly': [('campos_readonly', '=', True)]}"
+                                   placeholder="Indique los motivos para el estado pendiente o rechazado"/>
+                        </group>
+                        
+                        <group string="Documentos">
+                            <field name="carta_aceptacion" 
+                                   filename="carta_aceptacion_filename"
+                                   modifiers="{'readonly': [('campos_readonly', '=', True)]}"/>
+                            <field name="carta_aceptacion_filename" modifiers="{'invisible': True}"/>
+                        </group>
+                    </sheet>
+                    
+                    <!-- Chatter para seguimiento -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista kanban para estudiantes -->
+        <record id="view_tcu_estudiante_kanban" model="ir.ui.view">
+            <field name="name">tcu.estudiante.kanban</field>
+            <field name="model">tcu.estudiante</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="estado_solicitud">
+                    <field name="name"/>
+                    <field name="carnet"/>
+                    <field name="estado_solicitud"/>
+                    <field name="correo"/>
+                    <field name="lugar_tcu"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="oe_kanban_details">
+                                        <strong><field name="name"/></strong><br/>
+                                        <span>Carnet: <field name="carnet"/></span><br/>
+                                        <span>TCU: <field name="lugar_tcu"/></span><br/>
+                                        <span>📧 <field name="correo"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Accion para estudiantes -->
+        <record id="action_tcu_estudiante" model="ir.actions.act_window">
+            <field name="name">Estudiantes de TCU</field>
+            <field name="res_model">tcu.estudiante</field>
+            <field name="view_mode">kanban,tree,form</field>
+        </record>
+    </data>
+</odoo>

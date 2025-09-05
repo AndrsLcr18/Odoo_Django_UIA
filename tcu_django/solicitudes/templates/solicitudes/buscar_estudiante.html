@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Buscar Estudiante</title>
+    <!--CDN Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<div class="container mt-5">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Buscar Estudiante</h1>
+    <img src="{% static 'img/uia.png' %}" alt="Logo" height="50">
+</div>
+
+<!-- Formulario -->
+<form method="post" class="row g-3 mb-4">
+    {% csrf_token %}
+    <div class="col-auto">
+        <input type="text" class="form-control" name="identificacion" placeholder="Ingrese identificación" required>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary mb-3">Buscar</button>
+    </div>
+</form>
+
+{% if info is not None %}
+    {% if info|length > 0 %}
+        {% with estudiante=info.0 %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    Información del Estudiante
+                </div>
+                <div class="card-body">
+                    <p><strong>Nombre Completo:</strong> {{ estudiante.name|default:"No disponible" }}</p>
+                    <p><strong>Identificación:</strong> {{ estudiante.identificacion|default:"No disponible" }}</p>
+                    <p><strong>Carnet:</strong> {{ estudiante.carnet|default:"No disponible" }}</p>
+                    <p><strong>Correo Electrónico:</strong> {{ estudiante.correo|default:"No disponible" }}</p>
+                    <p><strong>Teléfono:</strong> {{ estudiante.telefono|default:"No disponible" }}</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    Control de Solicitud
+                </div>
+                <div class="card-body">
+                    <p><strong>Período de TCU:</strong> 
+                        {% if estudiante.periodo_id %}
+                            {% if estudiante.periodo_id|length > 1 %}
+                                {{ estudiante.periodo_id.1 }}
+                            {% else %}
+                                No disponible
+                            {% endif %}
+                        {% else %}
+                            No disponible
+                        {% endif %}
+                    </p>
+                    <p><strong>Lugar de TCU:</strong> {{ estudiante.lugar_tcu|default:"No disponible" }}</p>
+                    <p><strong>Encargado del Estudiante:</strong> {{ estudiante.encargado_estudiante|default:"No disponible" }}</p>
+                    <p><strong>Fecha de Solicitud:</strong> {{ estudiante.fecha_solicitud|default:"No disponible" }}</p>
+                    <p><strong>Estado:</strong> {{ estudiante.estado_solicitud|default:"No disponible" }}</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    Observaciones y Motivos
+                </div>
+                <div class="card-body">
+                    <p><strong>Observaciones:</strong> {{ estudiante.observaciones|default:"No disponible" }}</p>
+                    <p><strong>Motivo del Estado:</strong> {{ estudiante.motivo_estado|default:"No disponible" }}</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    Documentos
+                </div>
+                <div class="card-body">
+                    <p><strong>Carta de Aceptación:</strong> 
+                        {% if estudiante.carta_aceptacion_filename %}
+                            {{ estudiante.carta_aceptacion_filename }}
+                        {% else %}
+                            No disponible
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        {% endwith %}
+    {% else %}
+        <!-- SweetAlert si no encontró estudiante -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No encontrado',
+                    text: 'No se encontró ningún estudiante con esa identificación. Pruebe con otra.',
+                });
+            });
+        </script>
+    {% endif %}
+{% endif %}
+
+</div>
+
+<!--CDN Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

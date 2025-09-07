@@ -66,7 +66,7 @@ Instalar dependencias:
 
 Paso 2 :
 pip install -r requirements.txt
-(crear este archivo con tus dependencias si aún no lo tienes)
+
 
 Paso 3 :
 Aplicar migraciones:
@@ -84,7 +84,6 @@ python manage.py runserver
 
 -Modelos para estudiantes y solicitudes de TCU.
 
--Controladores que exponen APIs REST para Django.
 
 -Vistas en Odoo para gestión administrativa.
 
@@ -102,7 +101,6 @@ python manage.py runserver
 
 -----------------------------------------------
 ### 🔹 Integración Odoo ↔ Django
-Odoo expone endpoints REST definidos en modules/tcu_manager/controllers/tcu_controller.py.
 
 Django los consume desde tcu_django/solicitudes/odoo_rpc.py.
 
